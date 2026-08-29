@@ -1,8 +1,7 @@
 # Home Manager Flake Template
 
-A small [Home Manager](https://github.com/nix-community/home-manager) template
-for standalone Linux installations. Home Manager does not need to be installed
-globally before the first activation.
+A small [Home Manager](https://github.com/nix-community/home-manager) template for standalone Linux installations.
+Home Manager does not need to be installed globally before the first activation.
 
 The flake pins Nixpkgs and Home Manager to their matching `26.05` release
 branches. It supports `x86_64-linux` and `aarch64-linux`, includes a lockfile for
@@ -31,8 +30,7 @@ experimental-features = nix-command flakes
 ## Get Started
 
 1. Select **Use this template**, then **Create a new repository**.
-2. Choose an owner and repository name, select **Private**, and create the
-   repository.
+2. Choose an owner, visibility, and name, then create the repository.
 3. Clone your generated repository.
 4. Open `flake.nix` and review the three values in the customization block:
    `username`, `homeDirectory`, and `system`.
@@ -42,8 +40,6 @@ experimental-features = nix-command flakes
    `x86_64-linux` on standard 64-bit Intel and AMD systems.
 
 Repositories generated from this template are independent and can be private.
-Ordinary forks of this public repository remain public, and their visibility
-cannot be changed independently.
 
 Format and validate the configuration before activating it:
 
@@ -66,6 +62,14 @@ use:
 
 ```console
 home-manager switch --flake ".#your-username"
+```
+
+If the repository is at `${XDG_CONFIG_HOME:-$HOME/.config}/home-manager` and the
+configured username matches your Linux username, later activations can omit the
+flake argument:
+
+```console
+home-manager switch
 ```
 
 ## Customize
@@ -99,15 +103,17 @@ auto-imported recursively by `import-tree`, except files in paths containing
 
 Do not put secrets directly in Nix expressions. Evaluated values can be copied
 to the world-readable Nix store; use a dedicated secret-management tool
-instead.
+instead (e.g. [sops-nix](https://github.com/mic92/sops-nix)).
 
 ## Update Inputs
 
-Refresh the pinned Nixpkgs and Home Manager revisions with:
+Refresh the pinned inputs, validate the configuration, and then activate the new
+generation:
 
 ```console
 nix flake update
 nix flake check --print-build-logs
+home-manager switch --flake ".#your-username"
 ```
 
 `home.stateVersion` in `flake.nix` is a compatibility setting, not the selected
