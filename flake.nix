@@ -9,6 +9,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    stylix = {
+      url = "github:nix-community/stylix/release-26.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
@@ -28,12 +33,13 @@
       homeConfiguration = inputs.home-manager.lib.homeManagerConfiguration {
         pkgs = import inputs.nixpkgs { inherit system; };
         modules = [
+          inputs.stylix.homeModules.stylix
           (inputs.import-tree ./modules)
           {
             home.username = username;
             home.homeDirectory = homeDirectory;
 
-            # This controls Home Manager compatibility and should not be changed casually.
+            # This controls Home Manager compatibility and should not be changed.
             home.stateVersion = "26.05";
 
             programs.home-manager.enable = true;

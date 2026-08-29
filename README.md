@@ -3,14 +3,15 @@
 A small [Home Manager](https://github.com/nix-community/home-manager) template for standalone Linux installations.
 Home Manager does not need to be installed globally before the first activation.
 
-The flake pins Nixpkgs and Home Manager to their matching `26.05` release
-branches. It supports `x86_64-linux` and `aarch64-linux`, includes a lockfile for
-reproducibility, and validates the configured profile in CI.
+The flake pins Nixpkgs, Home Manager, and Stylix to their matching `26.05`
+release branches. It supports `x86_64-linux` and `aarch64-linux`, includes a
+lockfile for reproducibility, and validates the configured profile in CI.
 
 ## Included Defaults
 
 - Git with `main` as the default branch
-- The `bc` command-line calculator
+- The `bc` command-line calculator and Firefox
+- A dark Stylix theme generated from a pinned wallpaper
 - The Home Manager command after first activation
 - Repository-wide Nix formatting through `nixfmt-tree`
 
@@ -82,12 +83,14 @@ repository keeps the profile's features in a flat, auto-imported module tree:
 |-- flake.nix
 `-- modules/
     |-- git.nix
-    `-- packages.nix
+    |-- packages.nix
+    `-- stylix.nix
 ```
 
 - Add or remove packages in `modules/packages.nix`.
 - Set your Git name and email using the commented examples in
   `modules/git.nix`.
+- Customize the wallpaper and generated theme in `modules/stylix.nix`.
 - Customize the profile identity and architecture in `flake.nix`.
 
 Every `.nix` file under `modules/` is an ordinary Home Manager module and is
@@ -100,6 +103,41 @@ auto-imported recursively by `import-tree`, except files in paths containing
   home.packages = [ pkgs.hello ];
 }
 ```
+
+### Stylix
+
+Stylix is enabled by default and automatically themes supported applications.
+The generated Base16 palette can be previewed after activation at
+`~/.config/stylix/palette.html`. Disable an individual target with its
+`stylix.targets.<name>.enable` option if an application should retain its own
+appearance.
+
+The default wallpaper is the James Webb Space Telescope NIRCam image of the
+["Cosmic Cliffs" in the Carina Nebula](https://images.nasa.gov/details/carina_nebula),
+NASA asset ID `carina_nebula`, credited to NASA/ESA/CSA/STScI. See the
+[NASA media usage guidelines](https://www.nasa.gov/nasa-brand-center/images-and-media/)
+for usage information; inclusion does not imply endorsement. The image is
+downloaded reproducibly from NASA using the URL and content hash in
+`modules/stylix.nix`.
+
+To use a local wallpaper instead, replace the `pkgs.fetchurl` expression with a
+path. A local image must be tracked by Git so a Git-backed flake includes it:
+
+```nix
+stylix.image = ../assets/wallpaper.jpg;
+```
+
+Leave `stylix.base16Scheme` unset to derive colors from the wallpaper. To retain
+the wallpaper but use deterministic scheme colors, set it to a scheme supplied
+by `pkgs.base16-schemes`:
+
+```nix
+stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
+```
+
+See the official [Stylix configuration guide](https://stylix.danth.me/configuration.html)
+and [Home Manager option reference](https://stylix.danth.me/options/hm.html) for
+the available targets and settings.
 
 Do not put secrets directly in Nix expressions. Evaluated values can be copied
 to the world-readable Nix store; use a dedicated secret-management tool
