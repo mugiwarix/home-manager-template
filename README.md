@@ -42,15 +42,6 @@ experimental-features = nix-command flakes
 
 Repositories generated from this template are independent and can be private.
 
-Format and validate the configuration before activating it:
-
-```console
-nix fmt
-nix fmt -- --ci
-nix flake check --print-build-logs
-nix flake show
-```
-
 For the unmodified placeholder profile, the first activation command is:
 
 ```console
@@ -71,6 +62,15 @@ flake argument:
 
 ```console
 home-manager switch
+```
+
+Optionally, format and validate the configuration:
+
+```console
+nix fmt
+nix fmt -- --ci
+nix flake check --print-build-logs
+nix flake show
 ```
 
 ## Customize
