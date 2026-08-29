@@ -5,5 +5,8 @@ result-*
 # Ignore automatically generated direnv output
 .direnv
 
+# Ignore local Kilo workspace data
+.kilo/
+
 # Ignore NixOS interactive test driver history
 **/.nixos-test-history
